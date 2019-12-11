@@ -24,6 +24,7 @@ class CreateTaskLabelsTable extends Migration
                 ->references('id')->on('labels')
                 ->onDelete('cascade');
             $table->timestamps();
+            $table->index(['label_id', 'task_id']);
         });
     }
 

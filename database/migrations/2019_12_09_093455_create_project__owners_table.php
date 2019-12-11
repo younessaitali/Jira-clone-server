@@ -24,6 +24,7 @@ class CreateProjectOwnersTable extends Migration
                 ->references('id')->on('projects')
                 ->onDelete('cascade');
             $table->timestamps();
+            $table->index(['project_id', 'owner_id']);
         });
     }
 

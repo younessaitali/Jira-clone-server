@@ -3,10 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Project;
+use App\Project_Owner;
 use Illuminate\Http\Request;
+
 
 class ProjectController extends Controller
 {
+
+
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +27,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        return Project::all();
     }
 
     /**
@@ -35,7 +48,22 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $project = new Project();
+        $project->title = $request->title;
+
+        if ($request->start_at != null)
+            $project->start_at = $request->start_at;
+        if ($request->end_at != null)
+            $project->end_at = $request->end_at;
+        $project->save();
+        $owner = new Project_Owner();
+        $owner->project_id = $project->id;
+        $owner->owner_id = auth()->user()->id;
+        $owner->save();
+        return response()->json([
+            'success' => true,
+            'data' => $project
+        ], 200);
     }
 
     /**
@@ -46,7 +74,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        
     }
 
     /**

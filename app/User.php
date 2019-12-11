@@ -63,8 +63,9 @@ class User extends Authenticatable implements JWTSubject
     /*
     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function tasks()
+
+    public function projects()
     {
-        return $this->hasMany(Task::class);
+        return $this->belongsToMany(Project::class)->withTimeStamps();;
     }
 }

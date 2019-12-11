@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Http\Request;
@@ -11,6 +10,17 @@ use App\Http\Requests\RegistrationFormRequest;
 
 class APIController extends Controller
 {
+
+    /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api')->except('login');
+    //     $this->middleware('auth:api')->except('register');
+    // }
     /**
      * @var bool
      */
@@ -25,7 +35,7 @@ class APIController extends Controller
         $input = $request->only('email', 'password');
         $token = null;
 
-        if (!$token = JWTAuth::attempt($input)) {
+        if (!$token =  auth()->attempt($input)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid Email or Password',
@@ -50,7 +60,7 @@ class APIController extends Controller
         ]);
 
         try {
-            JWTAuth::invalidate($request->token);
+            auth()->invalidate($request->token);
 
             return response()->json([
                 'success' => true,

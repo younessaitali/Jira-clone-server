@@ -24,6 +24,7 @@ class CreateAssignmentsTable extends Migration
                 ->references('id')->on('tasks')
                 ->onDelete('cascade');
             $table->timestamps();
+            $table->index(['task_id', 'user_id']);
         });
     }
 
