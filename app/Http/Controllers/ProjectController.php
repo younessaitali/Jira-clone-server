@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use App\Project;
 use App\Project_Owner;
+use App\User;
 use Illuminate\Http\Request;
 
 
 class ProjectController extends Controller
 {
 
+
+    protected $user;
 
     /**
      * Create a new AuthController instance.
@@ -19,6 +23,7 @@ class ProjectController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->user = JWTAuth::parseToken()->authenticate();
     }
     /**
      * Display a listing of the resource.
@@ -27,7 +32,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return Project::all();
+        $project = $this->user->accessibleProjects();
+        return $project;
     }
 
     /**
@@ -48,17 +54,11 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $project = new Project();
-        $project->title = $request->title;
+        $project = $this->user->projects()->create($this->validateRequest());
 
-        if ($request->start_at != null)
-            $project->start_at = $request->start_at;
-        if ($request->end_at != null)
-            $project->end_at = $request->end_at;
-        $project->save();
         $owner = new Project_Owner();
         $owner->project_id = $project->id;
-        $owner->owner_id = auth()->user()->id;
+        $owner->owner_id = $project->owner_id;
         $owner->save();
         return response()->json([
             'success' => true,
@@ -74,7 +74,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        
+        $this->authorize('update', $project);
+
+        return $project;
     }
 
     /**
@@ -97,7 +99,9 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //
+        $this->authorize('update', $project);
+
+        $project->update($this->validateRequest());
     }
 
     /**
@@ -108,6 +112,17 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $this->authorize('update', $project);
+
+        $project->delete();
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'title' => 'required',
+            'start_at' => 'nullable',
+            'end_at' => 'nullable'
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Board;
+use App\Project;
 use Illuminate\Http\Request;
 
 class BoardController extends Controller
@@ -18,25 +19,6 @@ class BoardController extends Controller
         $this->middleware('auth:api');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -46,30 +28,19 @@ class BoardController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $project = Project::findOrFail($this->validateRequest()['project_id']);
+
+        $this->authorize('update', $project);
+
+        $board =  Board::create($this->validateRequest());
+
+        return response()->json([
+            'success' => true,
+            'data' => $board
+        ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Board  $board
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Board $board)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Board  $board
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Board $board)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -80,7 +51,14 @@ class BoardController extends Controller
      */
     public function update(Request $request, Board $board)
     {
-        //
+        $project = Project::findOrFail($board->project_id);
+        $this->authorize('update', $project);
+
+        $board->update($this->validateRequest());
+        return response()->json([
+            'success' => true,
+            'data' => $board
+        ], 200);
     }
 
     /**
@@ -91,6 +69,17 @@ class BoardController extends Controller
      */
     public function destroy(Board $board)
     {
-        //
+        $project = Project::findOrFail($board->project_id);
+
+        $this->authorize('update', $project);
+
+        $board->delete();
+    }
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'title' => 'required',
+            'project_id' => 'required'
+        ]);
     }
 }

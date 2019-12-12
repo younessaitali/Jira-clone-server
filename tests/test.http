@@ -1,0 +1,8 @@
+POST homestead.test/register
+Content-Type: multipart/form-data
+
+<request>
+<name>youness</name>
+<email>user@emial.fr</email>
+<password>password</password>
+</request>
