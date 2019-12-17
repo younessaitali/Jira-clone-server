@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Todo;
+use App\Todos_container;
 use Illuminate\Http\Request;
 
 class TodoController extends Controller
@@ -20,25 +21,7 @@ class TodoController extends Controller
     }
 
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -48,30 +31,14 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorization($this->validateRequest()['Container_id']);
+        $todo = Todo::create($this->validateRequest());
+        return response()->json([
+            'success' => true,
+            'data' => $todo
+        ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Todo  $todo
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Todo $todo)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Todo  $todo
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Todo $todo)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -82,7 +49,13 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $todo)
     {
-        //
+        $this->authorization($todo->container_id);
+        // dd($this->validateRequest());
+        $todo->update($this->validateRequest());
+        return response()->json([
+            'success' => true,
+            'data' => $todo
+        ], 200);
     }
 
     /**
@@ -93,6 +66,26 @@ class TodoController extends Controller
      */
     public function destroy(Todo $todo)
     {
-        //
+        $this->authorization($todo->container_id);
+        $todo->delete();
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'title' => 'required',
+            'container_id' => 'required',
+        ]);
+    }
+
+    protected function authorization($id)
+    {
+
+        $todos = Todos_container::findOrFail($id);
+        $task = $todos->task;
+        $board = $task->board;
+        $project = $board->project;
+
+        $this->authorize('update', $project);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Board;
 use App\Task;
 use Illuminate\Http\Request;
 
@@ -19,25 +20,8 @@ class TaskController extends Controller
         $this->middleware('auth:api');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -47,7 +31,20 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request);
+        $board = Board::findOrFail($this->validateRequest()['board_id']);
+
+        $project = $board->project;
+        // dd($project, $board);
+
+        $this->authorize('update', $project);
+
+        $task = Task::create($this->validateRequest());
+
+        return response()->json([
+            'success' => true,
+            'data' => $task
+        ], 200);
     }
 
     /**
@@ -61,16 +58,6 @@ class TaskController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -81,7 +68,17 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        $board = Board::findOrFail($task->board_id);
+        $project = $board->project;
+
+        $this->authorize('update', $project);
+        // dd($this->validateRequest());
+        $task->update($this->validateRequest());
+
+        return response()->json([
+            'success' => true,
+            'data' => $task
+        ], 200);
     }
 
     /**
@@ -92,6 +89,24 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $board = Board::findOrFail($task->board_id);
+
+        $project = $board->project;
+
+        $this->authorize('update', $project);
+
+        $task->delete();
+    }
+
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'board_id' => 'required',
+            'start_at' => 'nullable',
+            'end_at' => 'nullable'
+        ]);
     }
 }

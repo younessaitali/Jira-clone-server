@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Task;
 use App\Todos_container;
 use Illuminate\Http\Request;
 
@@ -21,26 +22,6 @@ class TodosContainerController extends Controller
 
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -48,29 +29,12 @@ class TodosContainerController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Todos_container  $todos_container
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Todos_container $todos_container)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Todos_container  $todos_container
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Todos_container $todos_container)
-    {
-        //
+        $this->authorization($this->validateRequest()['task_id']);
+        $todo_container = Todos_container::create($this->validateRequest());
+        return response()->json([
+            'success' => true,
+            'data' => $todo_container
+        ], 200);
     }
 
     /**
@@ -80,9 +44,14 @@ class TodosContainerController extends Controller
      * @param  \App\Todos_container  $todos_container
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Todos_container $todos_container)
+    public function update(Request $request, Todos_container $todosContainer)
     {
-        //
+        $this->authorization($todosContainer->task_id);
+        $todosContainer->update($this->validateRequest());
+        return response()->json([
+            'success' => true,
+            'data' => $todosContainer
+        ], 200);
     }
 
     /**
@@ -91,8 +60,28 @@ class TodosContainerController extends Controller
      * @param  \App\Todos_container  $todos_container
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Todos_container $todos_container)
+    public function destroy(Todos_container $todosContainer)
     {
-        //
+        $this->authorization($todosContainer->task_id);
+        $todosContainer->delete();
+    }
+
+
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'title' => 'required',
+            'task_id' => 'required',
+        ]);
+    }
+
+    protected function authorization($id)
+    {
+        $task = Task::findOrFail($id);
+        $board = $task->board;
+        $project = $board->project;
+
+        $this->authorize('update', $project);
     }
 }

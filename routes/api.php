@@ -25,6 +25,23 @@ Route::delete('board/{board}', 'BoardController@destroy');
 
 
 
+Route::post('task', 'TaskController@store');
+Route::put('task/{task}', 'TaskController@update');
+Route::delete('task/{task}', 'TaskController@destroy');
+
+
+Route::post('todos', 'TodosContainerController@store');
+Route::put('todos/{todosContainer}', 'TodosContainerController@update');
+Route::delete('todos/{todosContainer}', 'TodosContainerController@destroy');
+
+
+
+Route::post('todo', 'TodoController@store');
+Route::put('todo/{todo}', 'TodoController@update');
+Route::delete('todo/{todo}', 'TodoController@destroy');
+
+
+
 Route::post('project', 'ProjectController@store');
 Route::get('project', 'ProjectController@index');
 Route::get('project/{project}', 'ProjectController@show');

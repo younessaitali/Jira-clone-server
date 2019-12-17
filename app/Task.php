@@ -6,14 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    public function Board()
+    /**
+     * Attributes to guard against mass assignment.
+     *
+     * @var array
+     */
+
+    protected $guarded = [];
+
+
+    public function board()
     {
         return $this->belongsTo(Board::class);
     }
+
 
     public function todos()
     {
         return $this->hasMany(Todos_container::class);
     }
-    
 }
