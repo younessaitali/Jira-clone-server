@@ -60,7 +60,7 @@ class APIController extends Controller
         ]);
 
         try {
-            auth()->invalidate($request->token);
+            JWTAuth::invalidate($request->token);
 
             return response()->json([
                 'success' => true,

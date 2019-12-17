@@ -7,23 +7,24 @@ use App\Project;
 use App\Project_Owner;
 use App\User;
 use Illuminate\Http\Request;
+use App\Jira\Transformers\ProjectTransformer;
 
-
-class ProjectController extends Controller
+class ProjectController extends ApiResponseController
 {
 
 
-    protected $user;
+    protected $user, $projectTransformer;
 
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(ProjectTransformer $projectTransformer )
     {
         $this->middleware('auth:api');
         $this->user = JWTAuth::parseToken()->authenticate();
+        $this->projectTransformer = $projectTransformer;
     }
     /**
      * Display a listing of the resource.
@@ -33,7 +34,9 @@ class ProjectController extends Controller
     public function index()
     {
         $project = $this->user->accessibleProjects();
-        return $project;
+        return $this->respond($project->map(function($item){
+            return $item->Boards;
+        }));
     }
 
     /**
@@ -60,10 +63,10 @@ class ProjectController extends Controller
         $owner->project_id = $project->id;
         $owner->owner_id = $project->owner_id;
         $owner->save();
-        return response()->json([
+        return $this->respond([
             'success' => true,
             'data' => $project
-        ], 200);
+        ]);
     }
 
     /**
@@ -74,21 +77,16 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+
         $this->authorize('update', $project);
 
-        return $project;
+
+        return $this->respond([
+            'success' => true,
+            'data'=> $this->projectTransformer->transform($project)
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Project  $project
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Project $project)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.

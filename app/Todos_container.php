@@ -14,9 +14,9 @@ class Todos_container extends Model
 
     protected $guarded = [];
 
-    public function todos()
+    public function todo_list()
     {
-        return $this->hasMany(Todo::class);
+        return $this->hasMany(Todo::class, 'container_id');
     }
 
     public function task()

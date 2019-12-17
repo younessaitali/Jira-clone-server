@@ -31,7 +31,8 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorization($this->validateRequest()['Container_id']);
+        $this->authorization($this->validateRequest()['container_id']);
+
         $todo = Todo::create($this->validateRequest());
         return response()->json([
             'success' => true,

@@ -17,6 +17,7 @@ class CreateTodosTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->unsignedBigInteger('container_id');
+            $table->boolean('completed')->default(false)->nullable();
             $table->foreign('container_id')
                 ->references('id')->on('todos_containers')
                 ->onDelete('cascade');
