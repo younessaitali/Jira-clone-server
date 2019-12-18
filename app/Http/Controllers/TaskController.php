@@ -6,7 +6,7 @@ use App\Board;
 use App\Task;
 use Illuminate\Http\Request;
 
-class TaskController extends Controller
+class TaskController extends ApiResponseController
 {
 
 
@@ -41,10 +41,10 @@ class TaskController extends Controller
 
         $task = Task::create($this->validateRequest());
 
-        return response()->json([
+        return $this->respond([
             'success' => true,
             'data' => $task
-        ], 200);
+        ]);
     }
 
     /**
@@ -75,10 +75,10 @@ class TaskController extends Controller
         // dd($this->validateRequest());
         $task->update($this->validateRequest());
 
-        return response()->json([
+        return $this->respond([
             'success' => true,
             'data' => $task
-        ], 200);
+        ]);
     }
 
     /**
@@ -96,6 +96,9 @@ class TaskController extends Controller
         $this->authorize('update', $project);
 
         $task->delete();
+        return $this->respond([
+            'success' => true,
+        ]);
     }
 
 

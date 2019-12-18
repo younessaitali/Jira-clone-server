@@ -20,7 +20,7 @@ class ProjectController extends ApiResponseController
      *
      * @return void
      */
-    public function __construct(ProjectTransformer $projectTransformer )
+    public function __construct(ProjectTransformer $projectTransformer)
     {
         $this->middleware('auth:api');
         $this->user = JWTAuth::parseToken()->authenticate();
@@ -34,20 +34,12 @@ class ProjectController extends ApiResponseController
     public function index()
     {
         $project = $this->user->accessibleProjects();
-        return $this->respond($project->map(function($item){
-            return $item->Boards;
-        }));
+        return $this->respond([
+            'success' => true,
+            'data' => $project
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -83,7 +75,7 @@ class ProjectController extends ApiResponseController
 
         return $this->respond([
             'success' => true,
-            'data'=> $this->projectTransformer->transform($project)
+            'data' => $this->projectTransformer->transform($project)
         ]);
     }
 
@@ -100,6 +92,10 @@ class ProjectController extends ApiResponseController
         $this->authorize('update', $project);
 
         $project->update($this->validateRequest());
+        return $this->respond([
+            'success' => true,
+            'data' => $this->projectTransformer->transform($project)
+        ]);
     }
 
     /**
@@ -113,6 +109,10 @@ class ProjectController extends ApiResponseController
         $this->authorize('update', $project);
 
         $project->delete();
+        return $this->respond([
+            'success' => true,
+            'data' => $this->projectTransformer->transform($project)
+        ]);
     }
 
     protected function validateRequest()

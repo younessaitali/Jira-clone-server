@@ -6,7 +6,7 @@ use App\Board;
 use App\Project;
 use Illuminate\Http\Request;
 
-class BoardController extends Controller
+class BoardController extends ApiResponseController
 {
 
     /**
@@ -34,10 +34,10 @@ class BoardController extends Controller
 
         $board =  Board::create($this->validateRequest());
 
-        return response()->json([
+        return $this->respond([
             'success' => true,
             'data' => $board
-        ], 200);
+        ]);
     }
 
 
@@ -55,10 +55,10 @@ class BoardController extends Controller
         $this->authorize('update', $project);
 
         $board->update($this->validateRequest());
-        return response()->json([
+        return $this->respond([
             'success' => true,
             'data' => $board
-        ], 200);
+        ]);
     }
 
     /**
@@ -74,6 +74,10 @@ class BoardController extends Controller
         $this->authorize('update', $project);
 
         $board->delete();
+
+        return $this->respond([
+            'success' => true,
+        ]);
     }
     protected function validateRequest()
     {

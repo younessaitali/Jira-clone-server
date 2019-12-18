@@ -6,7 +6,7 @@ use App\Todo;
 use App\Todos_container;
 use Illuminate\Http\Request;
 
-class TodoController extends Controller
+class TodoController extends ApiResponseController
 {
 
 
@@ -34,10 +34,11 @@ class TodoController extends Controller
         $this->authorization($this->validateRequest()['container_id']);
 
         $todo = Todo::create($this->validateRequest());
-        return response()->json([
+
+        return $this->respond([
             'success' => true,
             'data' => $todo
-        ], 200);
+        ]);
     }
 
 
@@ -53,10 +54,11 @@ class TodoController extends Controller
         $this->authorization($todo->container_id);
         // dd($this->validateRequest());
         $todo->update($this->validateRequest());
-        return response()->json([
+
+        return $this->respond([
             'success' => true,
             'data' => $todo
-        ], 200);
+        ]);
     }
 
     /**
@@ -69,6 +71,9 @@ class TodoController extends Controller
     {
         $this->authorization($todo->container_id);
         $todo->delete();
+        return $this->respond([
+            'success' => true,
+        ]);
     }
 
     protected function validateRequest()

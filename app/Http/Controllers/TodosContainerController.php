@@ -6,7 +6,7 @@ use App\Task;
 use App\Todos_container;
 use Illuminate\Http\Request;
 
-class TodosContainerController extends Controller
+class TodosContainerController extends ApiResponseController
 {
 
 
@@ -31,10 +31,11 @@ class TodosContainerController extends Controller
     {
         $this->authorization($this->validateRequest()['task_id']);
         $todo_container = Todos_container::create($this->validateRequest());
-        return response()->json([
+
+        return $this->respond([
             'success' => true,
             'data' => $todo_container
-        ], 200);
+        ]);
     }
 
     /**
@@ -48,10 +49,11 @@ class TodosContainerController extends Controller
     {
         $this->authorization($todosContainer->task_id);
         $todosContainer->update($this->validateRequest());
-        return response()->json([
+
+        return $this->respond([
             'success' => true,
             'data' => $todosContainer
-        ], 200);
+        ]);
     }
 
     /**
@@ -64,6 +66,10 @@ class TodosContainerController extends Controller
     {
         $this->authorization($todosContainer->task_id);
         $todosContainer->delete();
+
+        return $this->respond([
+            'success' => true,
+        ]);
     }
 
 
