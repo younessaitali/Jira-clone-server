@@ -33,10 +33,11 @@ class ProjectController extends ApiResponseController
      */
     public function index()
     {
-        $project = $this->user->accessibleProjects();
+        // dd('it');
+        $projects = $this->user->accessibleProjects();
         return $this->respond([
             'success' => true,
-            'data' => $project
+            'projects' => $projects
         ]);
     }
 
