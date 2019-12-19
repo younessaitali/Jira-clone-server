@@ -16,11 +16,7 @@ class APIController extends Controller
      *
      * @return void
      */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api')->except('login');
-    //     $this->middleware('auth:api')->except('register');
-    // }
+
     /**
      * @var bool
      */
@@ -42,10 +38,7 @@ class APIController extends Controller
             ], 401);
         }
 
-        return response()->json([
-            'success' => true,
-            'token' => $token,
-        ]);
+        return $this->respondWithToken($token);
     }
 
     /**
@@ -55,24 +48,53 @@ class APIController extends Controller
      */
     public function logout(Request $request)
     {
-        $this->validate($request, [
-            'token' => 'required'
-        ]);
 
-        try {
-            JWTAuth::invalidate($request->token);
+        auth()->logout();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'User logged out successfully'
-            ]);
-        } catch (JWTException $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, the user cannot be logged out'
-            ], 500);
-        }
+        return response()->json(['message' => 'Successfully logged out']);
     }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return response()->json(auth()->user());
+    }
+
+
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth()->refresh());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+
+        ]);
+    }
+
+
 
     /**
      * @param RegistrationFormRequest $request

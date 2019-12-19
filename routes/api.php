@@ -16,6 +16,10 @@ use Illuminate\Routing\RouteGroup;
 
 Route::post('login', 'ApiController@login');
 Route::post('register', 'ApiController@register');
+Route::get('logout', 'ApiController@logout')->middleware('auth.jwt');
+Route::post('refresh', 'ApiController@refresh')->middleware('auth.jwt');
+Route::post('me', 'ApiController@me')->middleware('auth.jwt');
+
 
 
 
