@@ -29,4 +29,22 @@ class ProjectTransformer extends Transformer
             'boards' => $boards,
         ];
     }
+
+    public function projectTransform($projects)
+    {
+        $ProjectsList = collect();
+        $ProjectsList = $projects->map(function ($project) {
+            return [
+                'id' => $project->id,
+                'title' => $project->title,
+                'owner' => $project->owner,
+                'start_at' => $project->start_at,
+                'end_at' => $project->end_at,
+                "created_at" => $project->created_at,
+                "updated_at" => $project->updated_at
+
+            ];
+        });
+        return $ProjectsList;
+    }
 }

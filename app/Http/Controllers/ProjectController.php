@@ -37,7 +37,8 @@ class ProjectController extends ApiResponseController
         $projects = $this->user->accessibleProjects();
         return $this->respond([
             'success' => true,
-            'projects' => $projects
+            'projects' => $this->projectTransformer->projectTransform($projects),
+            // 'projects' => $projects,
         ]);
     }
 
