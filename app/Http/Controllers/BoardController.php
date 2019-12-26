@@ -36,7 +36,7 @@ class BoardController extends ApiResponseController
 
         return $this->respond([
             'success' => true,
-            'data' => $board
+            'board' => $board
         ]);
     }
 

@@ -37,7 +37,7 @@ class TodoController extends ApiResponseController
 
         return $this->respond([
             'success' => true,
-            'data' => $todo
+            'todo' => $todo
         ]);
     }
 

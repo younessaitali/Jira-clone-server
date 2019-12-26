@@ -59,9 +59,10 @@ class ProjectController extends ApiResponseController
         $owner->save();
         return $this->respond([
             'success' => true,
-            'data' => $project
+            'project' => $project
         ]);
     }
+
 
     /**
      * Display the specified resource.
@@ -77,7 +78,7 @@ class ProjectController extends ApiResponseController
 
         return $this->respond([
             'success' => true,
-            'data' => $this->projectTransformer->transform($project)
+            'project' => $this->projectTransformer->transform($project)
         ]);
     }
 

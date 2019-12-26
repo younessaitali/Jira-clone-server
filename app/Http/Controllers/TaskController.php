@@ -32,6 +32,9 @@ class TaskController extends ApiResponseController
     public function store(Request $request)
     {
         // dd($request);
+
+        
+
         $board = Board::findOrFail($this->validateRequest()['board_id']);
 
         $project = $board->project;
@@ -43,7 +46,7 @@ class TaskController extends ApiResponseController
 
         return $this->respond([
             'success' => true,
-            'data' => $task
+            'task' => $task
         ]);
     }
 
@@ -77,7 +80,7 @@ class TaskController extends ApiResponseController
 
         return $this->respond([
             'success' => true,
-            'data' => $task
+            'task' => $task
         ]);
     }
 
@@ -106,7 +109,7 @@ class TaskController extends ApiResponseController
     {
         return request()->validate([
             'title' => 'required',
-            'description' => 'required',
+            'description' => 'nullable',
             'board_id' => 'required',
             'start_at' => 'nullable',
             'end_at' => 'nullable'
