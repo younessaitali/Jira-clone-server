@@ -30,7 +30,7 @@ class ProjectTransformer extends Transformer
         ];
     }
 
-    public function projectTransform($projects)
+    public function projectsTransform($projects)
     {
         $ProjectsList = collect();
         $ProjectsList = $projects->map(function ($project) {
@@ -46,5 +46,19 @@ class ProjectTransformer extends Transformer
             ];
         });
         return $ProjectsList;
+    }
+
+    public function projectTransform($project)
+    {
+        return [
+            'id' => $project->id,
+            'title' => $project->title,
+            'owner' => $project->owner,
+            'start_at' => $project->start_at,
+            'end_at' => $project->end_at,
+            "created_at" => $project->created_at,
+            "updated_at" => $project->updated_at
+
+        ];
     }
 }

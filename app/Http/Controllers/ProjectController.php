@@ -37,7 +37,7 @@ class ProjectController extends ApiResponseController
         $projects = $this->user->accessibleProjects();
         return $this->respond([
             'success' => true,
-            'projects' => $this->projectTransformer->projectTransform($projects),
+            'projects' => $this->projectTransformer->projectsTransform($projects),
             // 'projects' => $projects,
         ]);
     }
@@ -59,7 +59,7 @@ class ProjectController extends ApiResponseController
         $owner->save();
         return $this->respond([
             'success' => true,
-            'project' => $project
+            'project' => $this->projectTransformer->transform($project)
         ]);
     }
 
@@ -97,7 +97,7 @@ class ProjectController extends ApiResponseController
         $project->update($this->validateRequest());
         return $this->respond([
             'success' => true,
-            'data' => $this->projectTransformer->transform($project)
+            'project' => $this->projectTransformer->projectTransform($project)
         ]);
     }
 
