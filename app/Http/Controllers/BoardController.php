@@ -83,7 +83,8 @@ class BoardController extends ApiResponseController
     {
         return request()->validate([
             'title' => 'required',
-            'project_id' => 'required'
+            'project_id' => 'required',
+            'sort' => 'required'
         ]);
     }
 }

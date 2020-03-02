@@ -33,7 +33,7 @@ class TaskController extends ApiResponseController
     {
         // dd($request);
 
-        
+
 
         $board = Board::findOrFail($this->validateRequest()['board_id']);
 
@@ -111,6 +111,7 @@ class TaskController extends ApiResponseController
             'title' => 'required',
             'description' => 'nullable',
             'board_id' => 'required',
+            'sort' => 'required',
             'start_at' => 'nullable',
             'end_at' => 'nullable'
         ]);
