@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Project;
 use App\Project_Owner;
 use Illuminate\Http\Request;
 
-class ProjectOwnerController extends Controller
+class ProjectOwnerController extends ApiResponseController
 {
 
 
@@ -47,7 +48,25 @@ class ProjectOwnerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->owner_id);
+        $project = Project::where('id', $request->project_id)->first();
+        $this->authorize('update', $project);
+
+        $exists = Project_Owner::where([
+            ['owner_id', '=', $request->owner_id],
+            ['project_id', '=', $request->project_id]
+        ])->exists();
+        if ($exists) {
+            return $this->respond([
+                'success' => false,
+                'message' => 'already a member'
+            ]);
+        }
+        $newOwner = Project_Owner::create($this->validateRequest());
+        return $this->respond([
+            'success' => true,
+            'user' => $newOwner
+        ]);
     }
 
     /**
@@ -92,6 +111,19 @@ class ProjectOwnerController extends Controller
      */
     public function destroy(Project_Owner $project_Owner)
     {
-        //
+        // dd($project_Owner);
+        $project = Project::findOrFail($project_Owner->project_id);
+        // dd($project);
+
+        $this->authorize('update', $project);
+        $project_Owner->delete();
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'owner_id' => 'required',
+            'project_id' => 'required',
+        ]);
     }
 }

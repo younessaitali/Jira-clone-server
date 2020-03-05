@@ -9,6 +9,7 @@ class ProjectTransformer extends Transformer
         // $boards = $project->boards;
         $boards = collect();
         $boards = $project->boards->map(function ($board) {
+            // dd($board->tasks->sortBy('sort'));
             $board->push($board->tasks->map(function ($task) {
 
                 $task->push($task->todos->map(function ($todos) {
