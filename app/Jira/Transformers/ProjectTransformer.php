@@ -20,6 +20,7 @@ class ProjectTransformer extends Transformer
             }));
             return $board;
         });
+        
         return [
             'id' => $project->id,
             'title' => $project->title,
