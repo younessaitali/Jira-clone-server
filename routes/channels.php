@@ -11,6 +11,8 @@
 |
 */
 
-Broadcast::channel('App.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+Broadcast::channel('project.{project}', function ($user, \App\Project $project) {
+
+    return $user->accessibleProjects()->contains($project);
+    // return true;
 });

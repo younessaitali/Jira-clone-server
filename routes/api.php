@@ -56,3 +56,7 @@ Route::delete('project/{project}', 'ProjectController@destroy');
 
 Route::post('project_Owner', 'ProjectOwnerController@store');
 Route::delete('project_Owner', 'ProjectOwnerController@destroy');
+
+
+
+// Route::post('broadcasting', 'broadcastingController@authenticate');

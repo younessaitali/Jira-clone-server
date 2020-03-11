@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Board;
+use App\Events\createBoard;
+use App\Events\removeBoard;
+use App\Events\updateBoard;
 use App\Project;
 use Illuminate\Http\Request;
 
@@ -31,8 +34,11 @@ class BoardController extends ApiResponseController
         $project = Project::findOrFail($this->validateRequest()['project_id']);
 
         $this->authorize('update', $project);
+        // dd($project->owners());
 
         $board =  Board::create($this->validateRequest());
+        // event((new createBoard($board)));
+        broadcast(new createBoard($board))->dontBroadcastToCurrentUser();
 
         return $this->respond([
             'success' => true,
@@ -55,6 +61,8 @@ class BoardController extends ApiResponseController
         $this->authorize('update', $project);
 
         $board->update($this->validateRequest());
+        event(new updateBoard($board));
+
         return $this->respond([
             'success' => true,
             'data' => $board
@@ -73,7 +81,10 @@ class BoardController extends ApiResponseController
 
         $this->authorize('update', $project);
 
+        event(new removeBoard($board));
+
         $board->delete();
+
 
         return $this->respond([
             'success' => true,

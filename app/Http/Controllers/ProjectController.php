@@ -34,7 +34,9 @@ class ProjectController extends ApiResponseController
     public function index()
     {
         // dd('it');
+        // dd($this->user);
         $projects = $this->user->accessibleProjects();
+        // dd($projects);
         return $this->respond([
             'success' => true,
             'projects' => $this->projectTransformer->projectsTransform($projects),

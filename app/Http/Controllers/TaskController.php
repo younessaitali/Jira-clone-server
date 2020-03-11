@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Board;
+use App\Events\createTask;
+use App\Events\removeTask;
+use App\Events\updateTask;
 use App\Task;
 use Illuminate\Http\Request;
 
@@ -43,6 +46,8 @@ class TaskController extends ApiResponseController
         $this->authorize('update', $project);
 
         $task = Task::create($this->validateRequest());
+        event(new createTask($task));
+
 
         return $this->respond([
             'success' => true,
@@ -77,7 +82,7 @@ class TaskController extends ApiResponseController
         $this->authorize('update', $project);
         // dd($this->validateRequest());
         $task->update($this->validateRequest());
-
+        event(new updateTask($task));
         return $this->respond([
             'success' => true,
             'task' => $task
@@ -98,6 +103,7 @@ class TaskController extends ApiResponseController
 
         $this->authorize('update', $project);
 
+        event(new removeTask($task));
         $task->delete();
         return $this->respond([
             'success' => true,
