@@ -78,11 +78,12 @@ class TaskController extends ApiResponseController
     {
         $board = Board::findOrFail($task->board_id);
         $project = $board->project;
+        $oldBoard = $task->board;
 
         $this->authorize('update', $project);
         // dd($this->validateRequest());
         $task->update($this->validateRequest());
-        event(new updateTask($task));
+        event(new updateTask($task, $oldBoard));
         return $this->respond([
             'success' => true,
             'task' => $task

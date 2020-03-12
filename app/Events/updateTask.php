@@ -14,16 +14,24 @@ use Illuminate\Queue\SerializesModels;
 class updateTask implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $payload;
+    public $task, $user, $project_id, $refresh, $oldBoardId;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($task)
+    public function __construct($task, $oldBoard)
     {
+        $this->oldBoardId = $oldBoard->id;
+        $this->refresh = false;
+
+        if ($oldBoard->id != $task->board_id)
+            $this->refresh = true;
+
         $board = Board::findOrFail($task->board_id);
-        $this->payload = ['project_id' => $board->project_id, $task];
+        $this->task = $task;
+        $this->project_id = $board->project_id;
+        $this->user = auth()->user();
         $this->dontBroadcastToCurrentUser();
     }
 
@@ -34,6 +42,6 @@ class updateTask implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('project' . $this->payload['project_id']);
+        return new PrivateChannel('project.' . $this->project_id);
     }
 }

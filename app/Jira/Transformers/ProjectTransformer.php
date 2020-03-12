@@ -7,6 +7,8 @@ class ProjectTransformer extends Transformer
     public function transform($project)
     {
         // $boards = $project->boards;
+        $user = auth()->user();
+
         $boards = collect();
         $boards = $project->boards->map(function ($board) {
             // dd($board->tasks->sortBy('sort'));
@@ -20,7 +22,7 @@ class ProjectTransformer extends Transformer
             }));
             return $board;
         });
-        
+
         return [
             'id' => $project->id,
             'title' => $project->title,
@@ -29,6 +31,7 @@ class ProjectTransformer extends Transformer
             'owner' => $project->owner,
             'owners' => $project->owners,
             'boards' => $boards,
+            'auth' => $user
         ];
     }
 

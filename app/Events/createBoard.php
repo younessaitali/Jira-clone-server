@@ -10,11 +10,12 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+
 class createBoard implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $board;
+    public $board, $user;
     /**
      * Create a new event instance.
      *
@@ -23,6 +24,7 @@ class createBoard implements ShouldBroadcast
     public function __construct($board)
     {
         $this->dontBroadcastToCurrentUser();
+        $this->user = auth()->user();
         $this->board = $board;
     }
 

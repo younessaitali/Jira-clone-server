@@ -23,7 +23,7 @@ class ProjectController extends ApiResponseController
     public function __construct(ProjectTransformer $projectTransformer)
     {
         $this->middleware('auth:api');
-        $this->user = JWTAuth::parseToken()->authenticate();
+        $this->user = auth()->user();
         $this->projectTransformer = $projectTransformer;
     }
     /**

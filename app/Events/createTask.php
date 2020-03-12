@@ -15,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 class createTask  implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $payload;
+    public $task, $user, $project_id;
     /**
      * Create a new event instance.
      *
@@ -24,7 +24,9 @@ class createTask  implements ShouldBroadcast
     public function __construct($task)
     {
         $board = Board::findOrFail($task->board_id);
-        $this->payload = ['project_id' => $board->project_id, $task];
+        $this->task = $task;
+        $this->project_id = $board->project_id;
+        $this->user = auth()->user();
         $this->dontBroadcastToCurrentUser();
     }
 
@@ -35,6 +37,6 @@ class createTask  implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('project' . $this->payload['project_id']);
+        return new PrivateChannel('project.' . $this->project_id);
     }
 }

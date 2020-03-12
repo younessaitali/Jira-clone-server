@@ -15,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 class updateBoard implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $board;
+    public $board, $user;
     /**
      * Create a new event instance.
      *
@@ -23,8 +23,9 @@ class updateBoard implements ShouldBroadcast
      */
     public function __construct($board)
     {
-        $this->board = $board;
         $this->dontBroadcastToCurrentUser();
+        $this->user = auth()->user();
+        $this->board = $board;
     }
 
     /**
@@ -34,6 +35,6 @@ class updateBoard implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('project' . $this->board->project_id);
+        return new PrivateChannel('project.' . $this->board['project_id']);
     }
 }

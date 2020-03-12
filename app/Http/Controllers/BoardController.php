@@ -8,17 +8,23 @@ use App\Events\removeBoard;
 use App\Events\updateBoard;
 use App\Project;
 use Illuminate\Http\Request;
+use App\Jira\Transformers\BoardTransformer;
 
 class BoardController extends ApiResponseController
 {
+
+
+    protected $boardTransformer;
+
 
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(BoardTransformer $boardTransformer)
     {
+        $this->boardTransformer = $boardTransformer;
         $this->middleware('auth:api');
     }
 
@@ -34,11 +40,11 @@ class BoardController extends ApiResponseController
         $project = Project::findOrFail($this->validateRequest()['project_id']);
 
         $this->authorize('update', $project);
-        // dd($project->owners());
+
 
         $board =  Board::create($this->validateRequest());
-        // event((new createBoard($board)));
-        broadcast(new createBoard($board))->dontBroadcastToCurrentUser();
+        event((new createBoard($board)));
+        // broadcast(new createBoard($board))->dontBroadcastToCurrentUser();
 
         return $this->respond([
             'success' => true,
@@ -61,7 +67,8 @@ class BoardController extends ApiResponseController
         $this->authorize('update', $project);
 
         $board->update($this->validateRequest());
-        event(new updateBoard($board));
+        // dd($this->boardTransformer->transform($board));
+        event(new updateBoard($this->boardTransformer->transform($board)));
 
         return $this->respond([
             'success' => true,
