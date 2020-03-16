@@ -14,11 +14,11 @@ use Illuminate\Routing\RouteGroup;
 |
 */
 
-Route::post('login', 'ApiController@login');
-Route::post('register', 'ApiController@register');
-Route::get('logout', 'ApiController@logout')->middleware('auth.jwt');
-Route::post('refresh', 'ApiController@refresh')->middleware('auth.jwt');
-Route::post('me', 'ApiController@me')->middleware('auth.jwt');
+Route::post('login', 'APIController@login');
+Route::post('register', 'APIController@register');
+Route::get('logout', 'APIController@logout')->middleware('auth.jwt');
+Route::post('refresh', 'APIController@refresh')->middleware('auth.jwt');
+Route::post('me', 'APIController@me')->middleware('auth.jwt');
 
 
 
